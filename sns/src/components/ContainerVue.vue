@@ -9,11 +9,12 @@
         :style="{ backgroundImage: `url(${uploadImg})` }"
       ></div>
       <div class="filters">
-        <div class="filter-1"></div>
-        <div class="filter-1"></div>
-        <div class="filter-1"></div>
-        <div class="filter-1"></div>
-        <div class="filter-1"></div>
+        <Filter
+          :uploadImg="uploadImg"
+          v-for="(list, i) in filterData"
+          :class="list"
+          :key="i"
+        />
       </div>
     </div>
     <div v-else-if="pageState == 2">
@@ -32,9 +33,14 @@ write!</textarea
 
 <script>
 import Post from "./PostVue.vue";
+import Filter from "./FilterBox.vue";
+import filter from "../assets/filter.js";
+
 export default {
   data() {
-    return {};
+    return {
+      filterData: [...filter],
+    };
   },
   methods: {
     submit(content) {
@@ -43,6 +49,7 @@ export default {
   },
   components: {
     Post,
+    Filter,
   },
   props: {
     data: Object,
