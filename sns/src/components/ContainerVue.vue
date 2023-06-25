@@ -3,9 +3,11 @@
     <div v-if="pageState == 0">
       <Post v-for="(list, i) in data" :key="i" :list="data[i]" />
     </div>
-    <!-- 필터선택페이지 -->
     <div v-else-if="pageState == 1">
-      <div class="upload-image"></div>
+      <div
+        class="upload-image"
+        :style="{ backgroundImage: `url(${uploadImg})` }"
+      ></div>
       <div class="filters">
         <div class="filter-1"></div>
         <div class="filter-1"></div>
@@ -15,10 +17,14 @@
       </div>
     </div>
     <div v-else-if="pageState == 2">
-      <!-- 글작성페이지 -->
-      <div class="upload-image"></div>
+      <div
+        class="upload-image"
+        :style="{ backgroundImage: `url(${uploadImg})` }"
+      ></div>
       <div class="write">
-        <textarea class="write-box">write!</textarea>
+        <textarea class="write-box" @input="submit($event.target.value)">
+write!</textarea
+        >
       </div>
     </div>
   </div>
@@ -27,12 +33,21 @@
 <script>
 import Post from "./PostVue.vue";
 export default {
+  data() {
+    return {};
+  },
+  methods: {
+    submit(content) {
+      return this.$emit("submit", content);
+    },
+  },
   components: {
     Post,
   },
   props: {
     data: Object,
     pageState: Number,
+    uploadImg: String,
   },
 };
 </script>

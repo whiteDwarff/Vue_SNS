@@ -2,20 +2,34 @@
   <div>
     <div class="header">
       <ul class="header-button-left">
-        <li>Cancel</li>
+        <li v-if="pageState" @click="pageState -= 1">Cancel</li>
       </ul>
       <ul class="header-button-right">
-        <li>Next</li>
+        <li v-if="pageState == 1" @click="pageState += 1">Next</li>
+        <li v-if="pageState == 2" @click="publish">발행</li>
       </ul>
       <img src="./assets/logo.png" class="logo" />
     </div>
 
-    <Container :data="data" :pageState="pageState" />
-    <button @click="more">더보기</button>
+    <Container
+      :data="data"
+      :pageState="pageState"
+      :uploadImg="uploadImg"
+      @submit="content = $event"
+    />
+
+    <!-- <button @click="more">더보기</button> -->
 
     <div class="footer">
       <ul class="footer-button-plus">
-        <input type="file" id="file" class="inputfile" />
+        <!-- accept="" 사용자가 이미지 파일만 선택하게 제한을 줄 수 있다. -->
+        <input
+          @change="upload"
+          accept="image/*"
+          type="file"
+          id="file"
+          class="inputfile"
+        />
         <label for="file" class="input-plus">+</label>
       </ul>
     </div>
@@ -33,7 +47,9 @@ export default {
     return {
       data,
       count: 0,
-      pageState: 2,
+      pageState: 0,
+      uploadImg: "",
+      content: "",
     };
   },
   methods: {
@@ -46,6 +62,30 @@ export default {
           this.data.push(res.data);
           this.count++;
         });
+    },
+    upload(e) {
+      // upload한 파일이 담겨있음, 기본형식은 fileList지만 indexing이 가능함.
+      // file[0]으로 선언 시 fileList는 file로 변환
+      let file = e.target.files;
+      // 사용자가 추가한 파일을 URL 형식으로 변환해줌.
+      let url = URL.createObjectURL(file[0]);
+      this.pageState++;
+      this.uploadImg = url;
+      console.log(this.uploadImg);
+    },
+    publish() {
+      let postData = {
+        name: "Mun ho",
+        userImage: "https://placeimg.com/100/100/arch",
+        postImage: `${this.uploadImg}`,
+        likes: 0,
+        date: "May 15",
+        liked: false,
+        content: `${this.content}`,
+        filter: "perpetua",
+      };
+      this.data.unshift(postData);
+      this.pageState = 0;
     },
   },
   components: {
