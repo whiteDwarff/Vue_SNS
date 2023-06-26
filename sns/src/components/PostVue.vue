@@ -13,7 +13,7 @@
         :style="{ backgroundImage: `url(${list.postImage})` }"
       ></div>
       <div class="post-content">
-        <p>{{ list.likes }}</p>
+        <p>{{ list.likes }} likes</p>
         <p>
           <strong>{{ list.name }}</strong> {{ list.content }}
         </p>

@@ -2,32 +2,33 @@
   <div>
     <div class="header">
       <ul class="header-button-left">
-        <li v-if="pageState" @click="pageState -= 1">Cancel</li>
+        <li
+          v-if="$store.state.pageState"
+          @click="$store.commit('revertPageHandler')"
+        >
+          Cancel
+        </li>
       </ul>
       <ul class="header-button-right">
-        <li v-if="pageState == 1" @click="pageState += 1">Next</li>
-        <li v-if="pageState == 2" @click="publish">발행</li>
+        <li
+          v-if="$store.state.pageState == 1"
+          @click="$store.commit('nextPageHandler')"
+        >
+          Next
+        </li>
+        <li
+          v-if="$store.state.pageState == 2"
+          @click="$store.commit('uploadPosting')"
+        >
+          발행
+        </li>
       </ul>
       <img src="./assets/logo.png" class="logo" />
     </div>
-    <!-- {{ $store.state.name }}
-    <button @click="$store.commit('updateName')">버튼</button>
-    {{ $store.state.age }}
-    <button @click="$store.commit('setAge', 10)">버튼</button> -->
-    {{ $store.state.data }}
-    <Container
-      :data="data"
-      :addFilter="addFilter"
-      :pageState="pageState"
-      :uploadImg="uploadImg"
-      @submit="content = $event"
-    />
-
-    <!-- <button @click="more">더보기</button> -->
+    <Container @submit="content = $event" />
 
     <div class="footer">
-      <ul class="footer-button-plus">
-        <!-- accept="" 사용자가 이미지 파일만 선택하게 제한을 줄 수 있다. -->
+      <ul v-if="$store.state.pageState == 0" class="footer-button-plus">
         <input
           @change="upload"
           accept="image/*"
@@ -43,63 +44,14 @@
 
 <script>
 import Container from "./components/ContainerVue.vue";
-import data from "./assets/theme.js";
-import axios from "axios";
 
 export default {
   name: "App",
-  data() {
-    return {
-      data,
-      count: 0,
-      pageState: 0,
-      uploadImg: "",
-      content: "",
-      addFilter: "",
-    };
-  },
-  // 실행되었을 때 ~~, FilterBox에서 발생한 event 수신
-  mounted() {
-    // this.emitter.on('작명', () => { '함수작성'})
-    this.emitter.on("addFilter", (data) => {
-      this.addFilter = data;
-      console.log(data);
-    });
-  },
   methods: {
-    more() {
-      // axios.post('url', {name : 'kang'}), 서버에 데이터 전송
-      // then() : 성공 시 실행, catch() : 실패 시 실행
-      axios
-        .get(`https://codingapple1.github.io/vue/more${this.count}.json`)
-        .then((res) => {
-          this.data.push(res.data);
-          this.count++;
-        });
-    },
     upload(e) {
-      // upload한 파일이 담겨있음, 기본형식은 fileList지만 indexing이 가능함.
-      // file[0]으로 선언 시 fileList는 file로 변환
-      let file = e.target.files;
-      // 사용자가 추가한 파일을 URL 형식으로 변환해줌.
-      let url = URL.createObjectURL(file[0]);
-      this.pageState++;
+      let url = URL.createObjectURL(e.target.files[0]);
       this.uploadImg = url;
-    },
-    publish() {
-      let postData = {
-        name: "Mun ho",
-        userImage: "https://placeimg.com/100/100/arch",
-        postImage: this.uploadImg,
-        likes: 0,
-        date: "May 15",
-        liked: false,
-        content: this.content,
-        filter: this.addFilter,
-      };
-      console.log(postData);
-      this.data.unshift(postData);
-      this.pageState = 0;
+      this.$store.commit("uploadImg", this.uploadImg);
     },
   },
   components: {

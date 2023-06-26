@@ -1,8 +1,7 @@
 <template>
   <div
-    @click="fire"
     :class="filter + ' filter-item'"
-    :style="{ backgroundImage: `url(${uploadImg})` }"
+    :style="{ backgroundImage: `url(${$store.state.uploadImg})` }"
   >
     <slot></slot>
   </div>
@@ -10,15 +9,7 @@
 
 <script>
 export default {
-  methods: {
-    fire() {
-      // main.js에서 전역으로 선언한 emitter 변수
-      // this.emitter.emit('작명', '데이터');
-      this.emitter.emit("addFilter", this.filter);
-    },
-  },
   props: {
-    uploadImg: String,
     filter: String,
   },
 };

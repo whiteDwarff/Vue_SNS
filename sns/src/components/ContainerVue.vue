@@ -1,34 +1,43 @@
 <template>
   <div class="wrap">
-    <div v-if="pageState == 0">
-      <!-- <Post v-for="(list, i) in data" :key="i" :list="data[i]" /> -->
-      <Post v-for="list in $store.state.data" :key="list" :list="list" />
+    {{ $store.pageState }}
+    <div v-if="$store.state.pageState == 0">
+      <Post
+        v-for="(list, i) in $store.state.data"
+        :key="i"
+        :list="list"
+        @click="$store.commit('likeHandler', i)"
+      />
     </div>
-    <div v-else-if="pageState == 1">
+    <!-- 이미지의 필터 바꾸기 -->
+    <div v-else-if="$store.state.pageState == 1">
       <div
-        :class="addFilter + ' upload-image'"
-        :style="{ backgroundImage: `url(${uploadImg})` }"
+        :class="$store.state.filterName + ' upload-image'"
+        :style="{ backgroundImage: `url(${$store.state.uploadImg})` }"
       ></div>
       <div class="filters">
         <Filter
-          :uploadImg="uploadImg"
-          v-for="(list, i) in filterData"
-          :filter="list"
+          v-for="(filter, i) in $store.state.filter"
           :key="i"
+          :filter="filter"
+          @click="$store.commit('addFilter', filter)"
         >
-          <span style="color: black">{{ list }}</span>
+          <span style="color: black">{{ filter }}</span>
         </Filter>
       </div>
     </div>
-    <div v-else-if="pageState == 2">
+    <!-- 게시글 작성 -->
+    <div v-else-if="$store.state.pageState == 2">
       <div
-        :class="addFilter + ' upload-image'"
-        :style="{ backgroundImage: `url(${uploadImg})` }"
+        :class="$store.state.filterName + ' upload-image'"
+        :style="{ backgroundImage: `url(${$store.state.uploadImg})` }"
       ></div>
       <div class="write">
-        <textarea class="write-box" @input="submit($event.target.value)">
-write!</textarea
-        >
+        <textarea
+          class="write-box"
+          @input="submit($event.target.value)"
+          placeholder="write here!"
+        ></textarea>
       </div>
     </div>
   </div>
@@ -37,17 +46,11 @@ write!</textarea
 <script>
 import Post from "./PostVue.vue";
 import Filter from "./FilterBox.vue";
-import filter from "../assets/filter.js";
 
 export default {
-  data() {
-    return {
-      filterData: [...filter],
-    };
-  },
   methods: {
     submit(content) {
-      return this.$emit("submit", content);
+      return this.$store.commit("submit", content);
     },
   },
   components: {
@@ -55,10 +58,7 @@ export default {
     Filter,
   },
   props: {
-    // data: Object,
     pageState: Number,
-    uploadImg: String,
-    addFilter: String,
   },
 };
 </script>
@@ -71,8 +71,10 @@ export default {
 .upload-image {
   width: 100%;
   height: 450px;
-  background: cornflowerblue;
-  background-size: cover;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  /* background-size: cover; */
 }
 .filters {
   overflow-x: scroll;
@@ -82,7 +84,6 @@ export default {
 .filter-1 {
   width: 100px;
   height: 100px;
-  background-color: cornflowerblue;
   margin: 10px 10px 10px auto;
   padding: 8px;
   display: inline-block;
@@ -103,11 +104,12 @@ export default {
   background: #555;
 }
 .write-box {
-  border: none;
-  width: 90%;
-  height: 100px;
-  padding: 15px;
-  margin: auto;
+  border: 1px solid rgb(35, 35, 35);
+  resize: none;
+  width: calc(100% - 10px);
+  height: 200px;
+  padding: 0 5px;
+  margin: 100px auto 0 auto;
   display: block;
   outline: none;
 }
