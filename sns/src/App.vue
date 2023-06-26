@@ -10,9 +10,14 @@
       </ul>
       <img src="./assets/logo.png" class="logo" />
     </div>
-
+    <!-- {{ $store.state.name }}
+    <button @click="$store.commit('updateName')">버튼</button>
+    {{ $store.state.age }}
+    <button @click="$store.commit('setAge', 10)">버튼</button> -->
+    {{ $store.state.data }}
     <Container
       :data="data"
+      :addFilter="addFilter"
       :pageState="pageState"
       :uploadImg="uploadImg"
       @submit="content = $event"
@@ -50,7 +55,16 @@ export default {
       pageState: 0,
       uploadImg: "",
       content: "",
+      addFilter: "",
     };
+  },
+  // 실행되었을 때 ~~, FilterBox에서 발생한 event 수신
+  mounted() {
+    // this.emitter.on('작명', () => { '함수작성'})
+    this.emitter.on("addFilter", (data) => {
+      this.addFilter = data;
+      console.log(data);
+    });
   },
   methods: {
     more() {
@@ -71,19 +85,19 @@ export default {
       let url = URL.createObjectURL(file[0]);
       this.pageState++;
       this.uploadImg = url;
-      console.log(this.uploadImg);
     },
     publish() {
       let postData = {
         name: "Mun ho",
         userImage: "https://placeimg.com/100/100/arch",
-        postImage: `${this.uploadImg}`,
+        postImage: this.uploadImg,
         likes: 0,
         date: "May 15",
         liked: false,
-        content: `${this.content}`,
-        filter: "perpetua",
+        content: this.content,
+        filter: this.addFilter,
       };
+      console.log(postData);
       this.data.unshift(postData);
       this.pageState = 0;
     },
@@ -95,8 +109,6 @@ export default {
 </script>
 
 <style scoped>
-@import "./style/app.css";
-
 body {
   margin: 0;
 }
@@ -114,7 +126,8 @@ ul {
   top: 13px;
 }
 .header {
-  width: 100%;
+  margin: 0 auto;
+  width: 50%;
   height: 40px;
   background-color: white;
   padding-bottom: 8px;

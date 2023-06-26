@@ -1,25 +1,28 @@
 <template>
-  <div>
+  <div class="wrap">
     <div v-if="pageState == 0">
-      <Post v-for="(list, i) in data" :key="i" :list="data[i]" />
+      <!-- <Post v-for="(list, i) in data" :key="i" :list="data[i]" /> -->
+      <Post v-for="list in $store.state.data" :key="list" :list="list" />
     </div>
     <div v-else-if="pageState == 1">
       <div
-        class="upload-image"
+        :class="addFilter + ' upload-image'"
         :style="{ backgroundImage: `url(${uploadImg})` }"
       ></div>
       <div class="filters">
         <Filter
           :uploadImg="uploadImg"
           v-for="(list, i) in filterData"
-          :class="list"
+          :filter="list"
           :key="i"
-        />
+        >
+          <span style="color: black">{{ list }}</span>
+        </Filter>
       </div>
     </div>
     <div v-else-if="pageState == 2">
       <div
-        class="upload-image"
+        :class="addFilter + ' upload-image'"
         :style="{ backgroundImage: `url(${uploadImg})` }"
       ></div>
       <div class="write">
@@ -52,14 +55,19 @@ export default {
     Filter,
   },
   props: {
-    data: Object,
+    // data: Object,
     pageState: Number,
     uploadImg: String,
+    addFilter: String,
   },
 };
 </script>
 
 <style>
+.wrap {
+  width: 50%;
+  margin: 0 auto;
+}
 .upload-image {
   width: 100%;
   height: 450px;
@@ -69,6 +77,7 @@ export default {
 .filters {
   overflow-x: scroll;
   white-space: nowrap;
+  margin-top: 100px;
 }
 .filter-1 {
   width: 100px;

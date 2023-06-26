@@ -9,7 +9,7 @@
         <span class="profile-name">{{ list.name }}</span>
       </div>
       <div
-        class="post-body"
+        :class="list.filter + ' post-body'"
         :style="{ backgroundImage: `url(${list.postImage})` }"
       ></div>
       <div class="post-content">
