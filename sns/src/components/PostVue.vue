@@ -77,6 +77,6 @@ export default {
   margin: 10px 0;
 }
 .content {
-  margin: 0 0 0 30px;
+  margin: 0 0 0 10px;
 }
 </style>
