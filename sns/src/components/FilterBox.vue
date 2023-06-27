@@ -1,14 +1,18 @@
 <template>
   <div
     :class="filter + ' filter-item'"
-    :style="{ backgroundImage: `url(${$store.state.uploadImg})` }"
+    :style="{ backgroundImage: `url(${uploadImg})` }"
   >
     <slot></slot>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
+  computed: {
+    ...mapState(["uploadImg"]),
+  },
   props: {
     filter: String,
   },

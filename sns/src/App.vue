@@ -1,34 +1,23 @@
 <template>
   <div>
+    <!-- header -->
     <div class="header">
       <ul class="header-button-left">
-        <li
-          v-if="$store.state.pageState"
-          @click="$store.commit('revertPageHandler')"
-        >
-          Cancel
-        </li>
+        <li v-if="pageState" @click="revertPageHandler">Cancel</li>
       </ul>
       <ul class="header-button-right">
-        <li
-          v-if="$store.state.pageState == 1"
-          @click="$store.commit('nextPageHandler')"
-        >
-          Next
-        </li>
-        <li
-          v-if="$store.state.pageState == 2"
-          @click="$store.commit('uploadPosting')"
-        >
-          발행
-        </li>
+        <li v-if="pageState == 1" @click="nextPageHandler">Next</li>
+        <li v-if="pageState == 2" @click="uploadPosting">발행</li>
       </ul>
       <img src="./assets/logo.png" class="logo" />
     </div>
-    <Container @submit="content = $event" />
-
+    <!-- con -->
+    <div id="con">
+      <Container @submit="content = $event" />
+    </div>
+    <!-- footer -->
     <div class="footer">
-      <ul v-if="$store.state.pageState == 0" class="footer-button-plus">
+      <ul class="footer-button-plus">
         <input
           @change="upload"
           accept="image/*"
@@ -36,7 +25,14 @@
           id="file"
           class="inputfile"
         />
-        <label for="file" class="input-plus">+</label>
+        <div class="button-wrap">
+          <i @click="changePaging(0)" class="fas fa-infinity"></i>
+
+          <label for="file" class="input-plus">
+            <i class="fa-solid fa-plus"></i
+          ></label>
+          <i @click="changePaging(3)" class="fa-regular fa-user"></i>
+        </div>
       </ul>
     </div>
   </div>
@@ -44,15 +40,37 @@
 
 <script>
 import Container from "./components/ContainerVue.vue";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "App",
+  data() {
+    return {
+      count: 0,
+    };
+  },
   methods: {
+    // vuex의 mutations에서 선언한 method를 축약하여 사용할 수 있음.
+    ...mapMutations([
+      "revertPageHandler",
+      "nextPageHandler",
+      "uploadPosting",
+      "changePaging",
+    ]),
     upload(e) {
       let url = URL.createObjectURL(e.target.files[0]);
       this.uploadImg = url;
       this.$store.commit("uploadImg", this.uploadImg);
     },
+    now() {
+      return new Date();
+    },
+  },
+  // Vue 페이지가 로드될 때 실행 후 실행되면 값을 리턴함, 랜더링이 한번만 실행
+  // ** vuex의 state에 접근가능하며, 변수를 축약하여 사용할 수 있다.
+  // $store.state.data -> data로 선언 가능
+  computed: {
+    ...mapState(["data", "filter", "pageState"]),
   },
   components: {
     Container,
@@ -102,14 +120,15 @@ ul {
   margin-top: 10px;
 }
 .footer {
-  width: 100%;
+  width: 50%;
+  margin: 0 auto;
   position: sticky;
   bottom: 0;
   padding-bottom: 10px;
   background-color: white;
 }
 .footer-button-plus {
-  width: 80px;
+  width: inherit;
   margin: auto;
   text-align: center;
   cursor: pointer;
@@ -126,5 +145,10 @@ ul {
 }
 .input-plus {
   cursor: pointer;
+}
+.button-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
 }
 </style>

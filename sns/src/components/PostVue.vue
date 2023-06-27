@@ -13,7 +13,11 @@
         :style="{ backgroundImage: `url(${list.postImage})` }"
       ></div>
       <div class="post-content">
-        <p>{{ list.likes }} likes</p>
+        <div class="like-box">
+          <i v-if="list.liked" class="fas fa-heart"></i>
+          <i v-else-if="list.liked == false" class="far fa-heart"></i>
+          <p class="content">{{ list.likes }} likes</p>
+        </div>
         <p>
           <strong>{{ list.name }}</strong> {{ list.content }}
         </p>
@@ -67,5 +71,12 @@ export default {
   font-size: 11px;
   color: grey;
   margin-top: -8px;
+}
+.like-box {
+  display: flex;
+  margin: 10px 0;
+}
+.content {
+  margin: 0 0 0 30px;
 }
 </style>

@@ -1,36 +1,35 @@
 <template>
   <div class="wrap">
-    {{ $store.pageState }}
-    <div v-if="$store.state.pageState == 0">
+    <div v-if="pageState == 0">
       <Post
-        v-for="(list, i) in $store.state.data"
+        v-for="(list, i) in data"
         :key="i"
         :list="list"
-        @click="$store.commit('likeHandler', i)"
+        @click="likeHandler(i)"
       />
     </div>
     <!-- 이미지의 필터 바꾸기 -->
-    <div v-else-if="$store.state.pageState == 1">
+    <div v-else-if="pageState == 1">
       <div
-        :class="$store.state.filterName + ' upload-image'"
-        :style="{ backgroundImage: `url(${$store.state.uploadImg})` }"
+        :class="filterName + ' upload-image'"
+        :style="{ backgroundImage: `url(${uploadImg})` }"
       ></div>
       <div class="filters">
         <Filter
-          v-for="(filter, i) in $store.state.filter"
+          v-for="(filter, i) in filter"
           :key="i"
           :filter="filter"
-          @click="$store.commit('addFilter', filter)"
+          @click="addFilter(filter)"
         >
           <span style="color: black">{{ filter }}</span>
         </Filter>
       </div>
     </div>
     <!-- 게시글 작성 -->
-    <div v-else-if="$store.state.pageState == 2">
+    <div v-else-if="pageState == 2">
       <div
-        :class="$store.state.filterName + ' upload-image'"
-        :style="{ backgroundImage: `url(${$store.state.uploadImg})` }"
+        :class="filterName + ' upload-image'"
+        :style="{ backgroundImage: `url(${uploadImg})` }"
       ></div>
       <div class="write">
         <textarea
@@ -40,33 +39,51 @@
         ></textarea>
       </div>
     </div>
+
+    <div v-else-if="pageState == 3">
+      <MyPage />
+    </div>
   </div>
 </template>
 
 <script>
 import Post from "./PostVue.vue";
 import Filter from "./FilterBox.vue";
+import MyPage from "./MyPage.vue";
+import { mapMutations, mapState } from "vuex";
 
 export default {
   methods: {
+    ...mapMutations(["likeHandler", "addFilter"]),
     submit(content) {
       return this.$store.commit("submit", content);
     },
   },
+  computed: {
+    ...mapState([
+      "data",
+      "filter",
+      "pageState",
+      "uploadImg",
+      "filterName",
+      "content",
+    ]),
+  },
   components: {
     Post,
     Filter,
+    MyPage,
   },
-  props: {
-    pageState: Number,
-  },
+  props: {},
 };
 </script>
 
 <style>
 .wrap {
   width: 50%;
+  height: 100%;
   margin: 0 auto;
+  background-color: #f00;
 }
 .upload-image {
   width: 100%;
